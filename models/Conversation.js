@@ -1,4 +1,39 @@
+
 import mongoose from "mongoose";
+
+const embeddedMessageSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId(),
+    },
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 5000,
+    },
+    readBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  {
+    _id: true,
+    versionKey: false,
+  }
+);
 
 const conversationSchema = new mongoose.Schema(
   {
@@ -25,6 +60,40 @@ const conversationSchema = new mongoose.Schema(
     name: {
       type: String,
       default: "",
+      trim: true,
+    },
+
+    description: {
+      type: String,
+      default: "",
+    },
+
+    groupImage: {
+      type: String,
+      default: "",
+    },
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
+    admins: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    messages: {
+      type: [embeddedMessageSchema],
+      default: [],
+    },
+
+    messageCount: {
+      type: Number,
+      default: 0,
     },
 
     lastMessageAt: {
@@ -32,7 +101,10 @@ const conversationSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    optimisticConcurrency: true,
+  }
 );
 
 conversationSchema.index({
@@ -40,7 +112,11 @@ conversationSchema.index({
   lastMessageAt: -1,
 });
 
-export default mongoose.model(
-  "Conversation",
-  conversationSchema
-);
+const Conversation =
+  mongoose.models.Conversation ||
+  mongoose.model(
+    "Conversation",
+    conversationSchema
+  );
+
+export default Conversation;

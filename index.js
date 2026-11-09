@@ -10,6 +10,7 @@ import { connectDB } from "./config/db.js";
 import { socketAuth } from "./middleware/socketAuth.js";
 import { registerChatHandlers } from "./handlers/chatHandler.js";
 import { registerCallHandlers } from "./handlers/callHandler.js";
+import { registerGroupCallHandlers } from "./handlers/groupCallHandler.js";
 
 const app = express();
 const PORT = Number(process.env.PORT || 5001);
@@ -60,6 +61,7 @@ io.on("connection", (socket) => {
 
   registerChatHandlers(io, socket);
   registerCallHandlers(io, socket);
+  registerGroupCallHandlers(io, socket);
 
   socket.on("disconnect", (reason) => {
     console.log(
