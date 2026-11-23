@@ -16,8 +16,12 @@ const app = express();
 const PORT = Number(process.env.PORT || 5001);
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL || "http://localhost:5173",
-  process.env.ADMIN_URL || "http://localhost:5174",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:5174",
+  "http://127.0.0.1:5174",
+  "https://company-connect-frontend.netlify.app",
+  "https://company-connect-admin.netlify.app",
 ];
 
 app.use(
